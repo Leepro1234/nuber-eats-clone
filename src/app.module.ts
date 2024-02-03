@@ -28,6 +28,8 @@ import { Order } from './orders/entitiies/order.entity';
 import { OrderItem } from './orders/entitiies/order-item.entity';
 import { HomeWorkModule } from './homeworks/homeworks.module';
 import { CommonModule } from './common/common.module';
+import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { CommonModule } from './common/common.module';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
     }),
     //nestJS v9 다음 패키지로 설치해야하는듯 함
@@ -120,6 +123,7 @@ import { CommonModule } from './common/common.module';
     OrdersModule,
     HomeWorkModule,
     CommonModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],

@@ -9,9 +9,9 @@ import { Column, Entity, ManyToMany, ManyToOne, RelationId } from 'typeorm';
 @ObjectType()
 @Entity()
 export class Payment extends CoreEntity {
-  @Field(() => Number)
+  @Field(() => String)
   @Column()
-  transactionId: number;
+  transactionId: string;
 
   @Field(() => User)
   @ManyToOne(type => User, user => user.payments)

@@ -138,6 +138,9 @@ export class RestaurantsService {
       const [restaurants, totalCount] = await this.restaurants.findAndCount({
         skip: (page - 1) * 25,
         take: 25,
+        order: {
+          isPromoted: 'DESC',
+        },
       });
 
       console.log(restaurants);
@@ -244,6 +247,9 @@ export class RestaurantsService {
         where: { category: { id: category.id } },
         take: 25,
         skip: (page - 1) * 25,
+        order: {
+          isPromoted: 'DESC',
+        },
       });
 
       category.restaurants = restaurants.map((restaurant, index) => ({

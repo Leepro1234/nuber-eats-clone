@@ -20,7 +20,6 @@ export class PaymentService {
     private readonly payments: Repository<Payment>,
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
-    private schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async createPayment(
@@ -48,6 +47,13 @@ export class PaymentService {
         }),
       );
 
+      restaurant.isPromoted = true;
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      restaurant.promotedUntil = date;
+
+      this.restaurants.save(restaurant);
+
       return {
         ok: true,
       };
@@ -69,26 +75,5 @@ export class PaymentService {
     } catch (e) {
       throw e;
     }
-  }
-
-  //매 30초에
-  @Cron('30 * * * * *', { name: 'cronJob' })
-  async checkForPayments() {
-    console.log(`Checking for Payments(cron)`);
-    const job = this.schedulerRegistry.getCronJob('cronJob');
-    console.log(job);
-    job.stop();
-  }
-
-  //5초마다
-  @Interval(5000)
-  async checkForPaymentsInterval() {
-    console.log('Checking for Payments(interval)');
-  }
-
-  //앱을실행하고 20초뒤에 한번만 실행됨
-  @Timeout(20000)
-  async afterStarts() {
-    console.log('Checking for Payments(timeout)');
   }
 }

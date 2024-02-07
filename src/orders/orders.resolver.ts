@@ -89,7 +89,7 @@ export class OrderResolver {
      * @returns
      */
     filter: ({ readyPotatos }, { potatoId }, context) => {
-      console.log(readyPotatos, potatoId, context);
+      console.log(context);
       return readyPotatos === potatoId;
     },
     resolve: ({ readyPotatos }) => {
@@ -103,13 +103,11 @@ export class OrderResolver {
     @Context() context: any,
   ) {
     //app.module에서 리턴한걸 가져옴
-    console.log('context', context);
     return this.pubSub.asyncIterator('hotPotatos');
   }
 
   @Subscription(() => Order, {
     filter: ({ pendingOrders: { ownerId } }, _, { user }) => {
-      console.log(ownerId, user);
       return ownerId === user.id;
     },
     resolve: ({ pendingOrders: { order } }) => order,

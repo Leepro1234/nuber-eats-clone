@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
-import { Context, GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from './HttpExceptionFilter';
 import * as Joi from 'joi';
@@ -31,6 +31,7 @@ import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
 import { ScheduleModule } from '@nestjs/schedule';
+import { Context } from 'graphql-ws';
 
 @Module({
   imports: [
@@ -88,11 +89,11 @@ import { ScheduleModule } from '@nestjs/schedule';
       subscriptions: {
         'subscriptions-transport-ws': {
           onConnect: (connectionParams, WebSocket, context) => {
-            console.log('2');
             //header는 ConnectionParams로 들어옴
             // console.log('context', context);
             // console.log('WebSocket', WebSocket);
             // console.log('connectionParams', connectionParams);
+            console.log('test');
             return { token: connectionParams['x-jwt'] };
           },
           onDisconnect: (webSocket, context) => {
@@ -102,12 +103,10 @@ import { ScheduleModule } from '@nestjs/schedule';
         },
       },
       autoSchemaFile: true, //스키마를 메모리에 저장,
-      context: ({ req, connection }) => {
-        console.log('2');
+      context: ({ req }) => {
+        //MiddleWare에서 리턴받은 req
         if (req) {
           return req;
-        }
-        if (connection) {
         }
       },
       formatError: formmatError,

@@ -13,7 +13,7 @@ export class HomeWorkResolver {
   @Query(returns => SampleOutput)
   fetchData() {
     console.log('hi');
-    this.homeworks.axiosFetchData();
+    //this.homeworks.axiosFetchData();
     this.homeworks.gotFetchData();
     return { ok: true };
   }

@@ -6,6 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
+import { repl } from '@nestjs/core';
 import { GqlArgumentsHost } from '@nestjs/graphql';
 import { number } from 'joi';
 import { ErrorCode, ErrorMessageV1 } from './common/types/exception.types';
@@ -35,18 +36,23 @@ export class HttpExceptionFilter implements ExceptionFilter {
       }
       return exception;
     } else {
-      console.log(ErrorMessageV1[exception.errorCode].message);
+      let message = '';
+      if (!exception.errorCode) {
+        message = replaceError(exception);
+      } else {
+        message = ErrorMessageV1[exception.errorCode].message;
+      }
       const status =
         exception instanceof HttpException
           ? exception.getStatus()
           : HttpStatus.INTERNAL_SERVER_ERROR;
 
-      response.status(status).json({
-        statusCode: status,
+      response.status(500).json({
+        statusCode: 500,
         timestamp: new Date().toISOString(),
         path: request.url,
         //message: exception.message || null,
-        message: ErrorMessageV1[exception.errorCode].message || null,
+        message: message || null,
       });
     }
   }
@@ -78,8 +84,9 @@ export class CustomError extends BadRequestException {
  * @description : CustomError외 정의되지 않은 Exception 발생 시 치환하기 위한 함수
  * @param error
  */
-export const replaceError = (error): void => {
+export const replaceError = (error): string => {
   let errorCode: systemCode;
+  let isHttpException = false;
   if (error.driverError) {
     console.log(1);
 
@@ -91,6 +98,7 @@ export const replaceError = (error): void => {
 
     //Http Error
     errorCode = error.response.statusCode;
+    isHttpException = true;
   } else if (error.errorCode) {
     console.log(3);
     console.log('넌 뭐니 ?');
@@ -102,6 +110,9 @@ export const replaceError = (error): void => {
   }
 
   if (!ErrorCode[errorCode]) {
+    if (isHttpException) {
+      return ErrorMessageV1[ErrorCode.NO_DEFINITION_ERROR].message;
+    }
     //정의되지않은 오류
     throw new CustomError(ErrorCode.NO_DEFINITION_ERROR, errorCode);
   }

@@ -25,13 +25,26 @@ export class HomeworkService {
   }
 
   async gotFetchData() {
-    await got
-      .get('https://www.naver.com', { retry: 3 })
-      .then(response => {
-        //console.log(response.body);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    try {
+      await got
+        .get('http://localhost:3000/', {
+          retry: {
+            limit: 5,
+            calculateDelay: ({ computedValue }) => {
+              console.log(computedValue);
+              if (computedValue) {
+                return 1000;
+              }
+              return 0;
+            },
+          },
+        })
+        .then(response => {
+          //console.log(response.body);
+        })
+        .catch(error => {});
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

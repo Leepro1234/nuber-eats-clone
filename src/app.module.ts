@@ -89,16 +89,7 @@ import { Context } from 'graphql-ws';
       subscriptions: {
         'subscriptions-transport-ws': {
           onConnect: (connectionParams, WebSocket, context) => {
-            //header는 ConnectionParams로 들어옴
-            // console.log('context', context);
-            // console.log('WebSocket', WebSocket);
-            // console.log('connectionParams', connectionParams);
-            console.log('test');
             return { token: connectionParams['x-jwt'] };
-          },
-          onDisconnect: (webSocket, context) => {
-            // 연결 종료 시 작업 수행
-            console.log('Client disconnected');
           },
         },
       },
